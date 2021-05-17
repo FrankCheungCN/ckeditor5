@@ -48,6 +48,7 @@
     "@ckeditor/ckeditor5-typing": "^27.1.0"
   },
   "devDependencies": {
+    "@visao/ckeditor5-video": "*",
     "@ckeditor/ckeditor5-core": "^27.1.0",
     "@ckeditor/ckeditor5-dev-utils": "^24.0.0",
     "@ckeditor/ckeditor5-dev-webpack-plugin": "^24.0.0",

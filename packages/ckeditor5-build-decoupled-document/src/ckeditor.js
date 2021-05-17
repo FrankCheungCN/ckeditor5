@@ -39,6 +39,11 @@ import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformation';
 import CloudServices from '@ckeditor/ckeditor5-cloud-services/src/cloudservices';
+import Video from '@visao/ckeditor5-video/src/video';
+import VideoToolbar from '@visao/ckeditor5-video/src/videotoolbar';
+import VideoResize from '@visao/ckeditor5-video/src/videoresize';
+import VideoStyle from '@visao/ckeditor5-video/src/videostyle';
+import VideoUpload from '@visao/ckeditor5-video/src/videoupload';
 
 export default class DecoupledEditor extends DecoupledEditorBase {}
 
@@ -76,11 +81,40 @@ DecoupledEditor.builtinPlugins = [
 	PasteFromOffice,
 	Table,
 	TableToolbar,
-	TextTransformation
+	TextTransformation,
+	Video,
+	VideoToolbar,
+	VideoUpload,
+	VideoResize,
+	VideoStyle
 ];
 
 // Editor configuration.
 DecoupledEditor.defaultConfig = {
+	upload: {
+		types: [ 'mp4' ],
+		allowMultipleFiles: false
+	},
+	styles: [
+		'alignLeft', 'alignCenter', 'alignRight'
+	],
+	resizeOptions: [
+		{
+			name: 'videoResize:original',
+			label: 'Original',
+			icon: 'original'
+		},
+		{
+			name: 'videoResize:50',
+			label: '50',
+			icon: 'medium'
+		},
+		{
+			name: 'videoResize:75',
+			label: '75',
+			icon: 'large'
+		}
+	],
 	toolbar: {
 		items: [
 			'heading',
@@ -108,6 +142,7 @@ DecoupledEditor.defaultConfig = {
 			'uploadImage',
 			'insertTable',
 			'mediaEmbed',
+			'videoUpload',
 			'|',
 			'undo',
 			'redo'
