@@ -23,10 +23,10 @@ import CKFinder from '@ckeditor/ckeditor5-ckfinder/src/ckfinder';
 import EasyImage from '@ckeditor/ckeditor5-easy-image/src/easyimage';
 import Heading from '@ckeditor/ckeditor5-heading/src/heading';
 import Image from '@ckeditor/ckeditor5-image/src/image';
-import ImageCaption from '@ckeditor/ckeditor5-image/src/imagecaption';
 import ImageStyle from '@ckeditor/ckeditor5-image/src/imagestyle';
 import ImageToolbar from '@ckeditor/ckeditor5-image/src/imagetoolbar';
 import ImageUpload from '@ckeditor/ckeditor5-image/src/imageupload';
+import ImageResize from '@ckeditor/ckeditor5-image/src/imageresize';
 import Indent from '@ckeditor/ckeditor5-indent/src/indent';
 import IndentBlock from '@ckeditor/ckeditor5-indent/src/indentblock';
 import Link from '@ckeditor/ckeditor5-link/src/link';
@@ -39,11 +39,12 @@ import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformation';
 import CloudServices from '@ckeditor/ckeditor5-cloud-services/src/cloudservices';
-import Video from '@visao/ckeditor5-video/src/video';
-import VideoToolbar from '@visao/ckeditor5-video/src/videotoolbar';
-import VideoResize from '@visao/ckeditor5-video/src/videoresize';
-import VideoStyle from '@visao/ckeditor5-video/src/videostyle';
-import VideoUpload from '@visao/ckeditor5-video/src/videoupload';
+import Video from '@ckeditor/ckeditor5-video-upload/src/video';
+import VideoToolbar from '@ckeditor/ckeditor5-video-upload/src/videotoolbar';
+import VideoResize from '@ckeditor/ckeditor5-video-upload/src/videoresize';
+import VideoStyle from '@ckeditor/ckeditor5-video-upload/src/videostyle';
+import VideoUpload from '@ckeditor/ckeditor5-video-upload/src/videoupload';
+import IndentFirst from '@ckeditor/ckeditor5-toolbox/src/indent-first';
 
 export default class DecoupledEditor extends DecoupledEditorBase {}
 
@@ -67,10 +68,10 @@ DecoupledEditor.builtinPlugins = [
 	EasyImage,
 	Heading,
 	Image,
-	ImageCaption,
 	ImageStyle,
 	ImageToolbar,
 	ImageUpload,
+	ImageResize,
 	Indent,
 	IndentBlock,
 	Link,
@@ -86,35 +87,51 @@ DecoupledEditor.builtinPlugins = [
 	VideoToolbar,
 	VideoUpload,
 	VideoResize,
-	VideoStyle
+	VideoStyle,
+	IndentFirst,
 ];
 
 // Editor configuration.
 DecoupledEditor.defaultConfig = {
-	upload: {
-		types: [ 'mp4' ],
-		allowMultipleFiles: false
+	video: {
+		upload: {
+			types: ['mp4', 'quicktime'],
+			allowMultipleFiles: false,
+		},
+		styles: ['alignLeft', 'alignCenter', 'alignRight'],
+		resizeOptions: [
+			{
+				name: 'videoResize:original',
+				label: 'Original',
+				icon: 'original',
+			},
+			{
+				name: 'videoResize:50',
+				label: '50',
+				icon: 'medium',
+			},
+			{
+				name: 'videoResize:75',
+				label: '75',
+				icon: 'large',
+			},
+		],
+		toolbar: [
+			'videoStyle:alignLeft',
+			'videoStyle:alignCenter',
+			'videoStyle:alignRight',
+			// '|',
+			// 'videoResize:50',
+			// 'videoResize:75',
+			// 'videoResize:original',
+		],
 	},
-	styles: [
-		'alignLeft', 'alignCenter', 'alignRight'
-	],
-	resizeOptions: [
-		{
-			name: 'videoResize:original',
-			label: 'Original',
-			icon: 'original'
-		},
-		{
-			name: 'videoResize:50',
-			label: '50',
-			icon: 'medium'
-		},
-		{
-			name: 'videoResize:75',
-			label: '75',
-			icon: 'large'
-		}
-	],
+	fontFamily: {
+		options: ['default', '微软雅黑, Microsoft Yahei'],
+	},
+	fontSize: {
+		options: [12, 15, 'default', 20, 25, 30, 32, 40, 50, 60],
+	},
 	toolbar: {
 		items: [
 			'heading',
@@ -136,39 +153,52 @@ DecoupledEditor.defaultConfig = {
 			'|',
 			'outdent',
 			'indent',
+			'indentFirst',
 			'|',
-			'link',
+			// 'link',
 			'blockquote',
 			'uploadImage',
 			'insertTable',
-			'mediaEmbed',
+			// 'mediaEmbed',
 			'videoUpload',
 			'|',
 			'undo',
-			'redo'
-		]
+			'redo',
+		],
 	},
 	image: {
-		styles: [
-			'full',
-			'alignLeft',
-			'alignRight'
-		],
+		styles: ['alignLeft', 'alignCenter', 'alignRight'],
+		resizeUnit: 'px',
+		// resizeOptions: [
+		// 	{
+		// 		name: 'resizeImage:100%',
+		// 		label: 'Original',
+		// 		value: null,
+		// 	},
+		// 	{
+		// 		name: 'resizeImage:50',
+		// 		label: '50%',
+		// 		value: '50',
+		// 	},
+		// 	{
+		// 		name: 'resizeImage:75',
+		// 		label: '75%',
+		// 		value: '75',
+		// 	},
+		// ],
 		toolbar: [
 			'imageStyle:alignLeft',
-			'imageStyle:full',
+			'imageStyle:alignCenter',
 			'imageStyle:alignRight',
-			'|',
-			'imageTextAlternative'
-		]
+			// '|',
+			// 'resizeImage',
+			// '|',
+			// 'imageTextAlternative'
+		],
 	},
 	table: {
-		contentToolbar: [
-			'tableColumn',
-			'tableRow',
-			'mergeTableCells'
-		]
+		contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
 	},
 	// This value must be kept in sync with the language defined in webpack.config.js.
-	language: 'en'
+	language: 'en',
 };

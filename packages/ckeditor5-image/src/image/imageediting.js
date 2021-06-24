@@ -13,7 +13,7 @@ import ImageLoadObserver from './imageloadobserver';
 import {
 	viewFigureToModel,
 	modelToViewAttributeConverter,
-	srcsetAttributeConverter
+	srcsetAttributeConverter,
 } from './converters';
 
 import { toImageWidget } from './utils';
@@ -50,75 +50,85 @@ export default class ImageEditing extends Plugin {
 		const conversion = editor.conversion;
 
 		// See https://github.com/ckeditor/ckeditor5-image/issues/142.
-		editor.editing.view.addObserver( ImageLoadObserver );
+		editor.editing.view.addObserver(ImageLoadObserver);
 
 		// Configure schema.
-		schema.register( 'image', {
+		schema.register('image', {
 			isObject: true,
 			isBlock: true,
 			allowWhere: '$block',
-			allowAttributes: [ 'alt', 'src', 'srcset' ]
-		} );
+			allowAttributes: ['alt', 'src', 'srcset'],
+		});
 
-		conversion.for( 'dataDowncast' ).elementToElement( {
+		conversion.for('dataDowncast').elementToElement({
 			model: 'image',
-			view: ( modelElement, { writer } ) => createImageViewElement( writer )
-		} );
+			view: (modelElement, { writer }) => createImageViewElement(writer),
+		});
 
-		conversion.for( 'editingDowncast' ).elementToElement( {
+		conversion.for('editingDowncast').elementToElement({
 			model: 'image',
-			view: ( modelElement, { writer } ) => toImageWidget( createImageViewElement( writer ), writer, t( 'image widget' ) )
-		} );
+			view: (modelElement, { writer }) =>
+				toImageWidget(
+					createImageViewElement(writer),
+					writer,
+					t('image widget')
+				),
+		});
 
-		conversion.for( 'downcast' )
-			.add( modelToViewAttributeConverter( 'src' ) )
-			.add( modelToViewAttributeConverter( 'alt' ) )
-			.add( srcsetAttributeConverter() );
+		conversion
+			.for('downcast')
+			.add(modelToViewAttributeConverter('src'))
+			.add(modelToViewAttributeConverter('alt'))
+			.add(srcsetAttributeConverter());
 
-		conversion.for( 'upcast' )
-			.elementToElement( {
+		conversion
+			.for('upcast')
+			.elementToElement({
 				view: {
 					name: 'img',
 					attributes: {
-						src: true
-					}
+						src: true,
+					},
 				},
-				model: ( viewImage, { writer } ) => writer.createElement( 'image', { src: viewImage.getAttribute( 'src' ) } )
-			} )
-			.attributeToAttribute( {
+				model: (viewImage, { writer }) =>
+					writer.createElement('image', {
+						src: viewImage.getAttribute('src'),
+					}),
+			})
+			.attributeToAttribute({
 				view: {
 					name: 'img',
-					key: 'alt'
+					key: 'alt',
 				},
-				model: 'alt'
-			} )
-			.attributeToAttribute( {
+				model: 'alt',
+			})
+			.attributeToAttribute({
 				view: {
 					name: 'img',
-					key: 'srcset'
+					key: 'srcset',
 				},
 				model: {
 					key: 'srcset',
-					value: viewImage => {
+					value: (viewImage) => {
 						const value = {
-							data: viewImage.getAttribute( 'srcset' )
+							data: viewImage.getAttribute('srcset'),
 						};
 
-						if ( viewImage.hasAttribute( 'width' ) ) {
-							value.width = viewImage.getAttribute( 'width' );
+						if (viewImage.hasAttribute('width')) {
+							value.width = viewImage.getAttribute('width');
 						}
 
 						return value;
-					}
-				}
-			} )
-			.add( viewFigureToModel() );
+					},
+				},
+			})
+			.add(viewFigureToModel());
 
-		const insertImageCommand = new InsertImageCommand( editor );
+		const insertImageCommand = new InsertImageCommand(editor);
 
 		// Register `insertImage` command and add `imageInsert` command as an alias for backward compatibility.
-		editor.commands.add( 'insertImage', insertImageCommand );
-		editor.commands.add( 'imageInsert', insertImageCommand );
+		editor.commands.add('insertImage', insertImageCommand);
+		editor.commands.add('imageInsert', insertImageCommand);
 	}
 }
 
@@ -131,11 +141,13 @@ export default class ImageEditing extends Plugin {
 // @private
 // @param {module:engine/view/downcastwriter~DowncastWriter} writer
 // @returns {module:engine/view/containerelement~ContainerElement}
-export function createImageViewElement( writer ) {
-	const emptyElement = writer.createEmptyElement( 'img' );
-	const figure = writer.createContainerElement( 'figure', { class: 'image' } );
+export function createImageViewElement(writer) {
+	const emptyElement = writer.createEmptyElement('img');
+	const figure = writer.createContainerElement('figure', {
+		class: 'image image_default',
+	});
 
-	writer.insert( writer.createPositionAt( figure, 0 ), emptyElement );
+	writer.insert(writer.createPositionAt(figure, 0), emptyElement);
 
 	return figure;
 }
